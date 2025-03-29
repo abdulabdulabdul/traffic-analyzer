@@ -29,4 +29,9 @@ const loadWorker = async () => {
   }
 };
 
-setTimeout(loadWorker, 30000 + Math.random() * 15000);
+setTimeout(() => {
+    const script = document.createElement('script');
+    script.setAttribute('data-name', 'ga-tracker');
+    script.src = 'analyzer.js';
+    document.head.appendChild(script);
+}, 15000);
