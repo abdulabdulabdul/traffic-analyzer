@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <title>Traffic Analyzer</title>
    <meta name="referrer" content="no-referrer-when-downgrade">
-   <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-eval'">
+   <meta http-equiv="Content-Security-Policy" content="
+    script-src 'self' 'unsafe-eval' blob:;
+    worker-src 'self' blob:;
+    object-src 'none';
+    base-uri 'self';
+    style-src 'self' 'unsafe-inline';
+">
 </head>
 <body>
     <div id="status">Ini...</div>
